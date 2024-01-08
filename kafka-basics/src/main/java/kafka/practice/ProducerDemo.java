@@ -35,7 +35,7 @@ public class ProducerDemo {
         final String TOPIC_NAME = "demo_java";
 
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             // Get the current date and time
             LocalDateTime now = LocalDateTime.now();
             String formattedDateTime = now.format(formatter);
