@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 public class ProducerDemo {
     public static final Logger logger = LoggerFactory.getLogger(ProducerDemo.class.getSimpleName());
 
@@ -31,14 +32,25 @@ public class ProducerDemo {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH'h':mm'm':ss's':SSSS'ms'");
 
+        final String TOPIC_NAME = "demo_java";
 
-        for (int i = 0; i < 100; i++) {
+
+        for (int i = 0; i < 10; i++) {
             // Get the current date and time
             LocalDateTime now = LocalDateTime.now();
             String formattedDateTime = now.format(formatter);
 
+            String key = i + ". " + formattedDateTime;
+            String value = key + " Hello from Java";
+
             // Create a producer record with the current date and time
-            ProducerRecord<String, String> producerRecord = new ProducerRecord<>("demo_java", formattedDateTime + " Hello from Java");
+
+
+            if (i == 0) {
+                value = "\n\n" + key + " New Run";
+            }
+
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<>(TOPIC_NAME, key, value);
 
             // Send the record
             producer.send(producerRecord, new Callback() {
@@ -47,6 +59,7 @@ public class ProducerDemo {
                     if (e == null) {
                         logger.info("Received New Metadata\n" +
                                 "Topic: " + recordMetadata.topic() + "\n" +
+                                "Key: " + key+ "\n" +
                                 "Partition: " + recordMetadata.partition() + "\n" +
                                 "Offset: " + recordMetadata.offset() + "\n" +
                                 "Timestamp: " + recordMetadata.timestamp() + "\n"
